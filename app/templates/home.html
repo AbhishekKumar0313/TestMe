@@ -15,6 +15,46 @@
       .card {
         margin: 20px 0;
       }
+      .submit-btn {
+        position: relative;
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .submit-btn:disabled {
+        cursor: not-allowed;
+    }
+    .submit-btn span {
+        position: relative;
+        z-index: 1;
+    }
+    .submit-btn.loading::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
+        animation: moveShades 1.5s infinite linear;
+        z-index: 0;
+    }
+    @keyframes moveShades {
+        from {
+            left: -100%;
+        }
+        to {
+            left: 100%;
+        }
+    }
     </style>
   </head>
   <body>
@@ -40,7 +80,7 @@
               <label for="file" class="form-label">Or Upload a File</label>
               <input type="file" class="form-control" id="file" name="file" />
             </div>
-            <button type="submit" class="btn btn-primary w-100">Submit</button>
+            <button type="submit" id="submitButton" class="btn submit-btn btn-primary w-100"><span>Submit</span></button>
             {% if error %}
             <p class="text-danger">{{ error }}</p>
             {% endif %}
@@ -54,5 +94,24 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      const submitButton = document.getElementById('submitButton');
+
+        submitButton.addEventListener('click', function () {
+            // Change button text
+            submitButton.disabled = false; // Disable the button
+            submitButton.querySelector('span').textContent = 'Analyzing your content...';
+            submitButton.classList.add('loading');
+            // Simulate a loading delay
+            setTimeout(() => {
+                submitButton.querySelector('span').textContent = 'Submit'; // Reset text
+                submitButton.disabled = false;
+                submitButton.classList.remove('loading'); // Re-enable the button
+            }, 15000); // Adjust delay time as needed
+        });
+
+
+
+    </script>
   </body>
 </html>

@@ -7,7 +7,7 @@ import json
 import google.generativeai as genai
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
-import os,re
+import os,re,ast
 import speech_recognition as sr
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -60,6 +60,9 @@ def home_page(request):
         if request.method == "POST":
             content=request.POST.get("content")
             file=request.FILES.get("file")
+            # print(content,file)
+            if not content and not file:
+                return render(request, "home.html", {"username": request.session["username"], "error": "Please enter content or upload a file."})
             extracted_text=""
             if content:
                 extracted_text+=content
@@ -260,14 +263,18 @@ def analysis(request):
         # Generate AI response
         model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content(
-            f"Evaluate the similarity between the provided actual and user answers, focusing on both meaning and accuracy for {result} and return list of yes and no for each response"
+            f"Evaluate the similarity between the provided actual and user answers, focusing on both meaning and accuracy for {result} and return only a single list of 'yes' and 'no' for each response in return"
 )
         print(response.text)
+        ans=response.text
+        print("------->",type(ans))
 
         # Clean up response text and generate list
-        response_text = response.text.strip()  # Remove trailing spaces or newlines
-        response_list = response_text.split(",")
-        print(response_list)  # Check the response list for debugging
+        # response_text =''.join(response.text.strip().split(','))  # Remove trailing spaces or newlines
+        response_text= ast.literal_eval(response.text)
+        print(type(response_text),response_text)
+        response_list = response_text
+        # print(response_list)  # Check the response list for debugging
 
         # Initialize counters for correct and wrong answers
         total = len(response_list)
