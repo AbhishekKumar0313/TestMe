@@ -24,7 +24,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 model=whisper.load_model("base")
 logger = logging.getLogger(__name__)
 
-genai.configure(api_key='AIzaSyDpcJfbSdYPtTug4HDdsYPX6aVTB60drQw')
+genai.configure(api_key='*')
 
 # Create your views here.
 def login_page(request):
